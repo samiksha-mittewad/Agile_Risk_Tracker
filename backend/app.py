@@ -13,6 +13,9 @@ auth.create_users_table()
 if "logged_in" not in st.session_state:
     st.session_state["logged_in"] = False
 
+if "fetch_clicked" not in st.session_state:
+    st.session_state["fetch_clicked"] = False
+
 st.set_page_config(page_title="Agile Risk Tracker", layout="wide")
 
 # ---------------- AUTH ----------------
@@ -192,6 +195,10 @@ else:
     board_id = board_input
 
 if st.button("Fetch Trello Data"):
+    st.session_state.fetch_clicked = True
+
+# ✅ RUN ONLY ONCE (NO DUPLICATION)
+if st.session_state.fetch_clicked:
 
     cards = get_cards(board_id)
 
