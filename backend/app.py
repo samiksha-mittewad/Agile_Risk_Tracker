@@ -119,16 +119,22 @@ with col1:
 
         database.add_data((progress, days_left, team_size, budget, c_val, pred))
 
-        if pred == 0:
-            st.success("🟢 LOW RISK")
-        elif pred == 1:
-            st.warning("🟡 MEDIUM RISK")
-        else:
-            st.error("🔴 HIGH RISK")
+        risk_labels = {
+            0: "🟢 LOW RISK",
+            1: "🟡 MEDIUM RISK",
+            2: "🚨 HIGH RISK"
+        }
 
+        st.markdown(f"### {risk_labels[pred]}")
         st.metric("Confidence", f"{confidence}%")
 
-        # -------- EXPLAINABILITY --------
+        if pred == 2:
+            st.error("⚠️ High chance of delay")
+        elif pred == 1:
+            st.warning("⚠️ Needs attention")
+        else:
+            st.success("✅ On track")
+
         reasons = []
         if progress < 40:
             reasons.append("Low progress")
@@ -138,9 +144,17 @@ with col1:
             reasons.append("Small team")
 
         if reasons:
-            st.write("### 🔍 Why?")
+            st.markdown("🔍 **Why?**")
             for r in reasons:
-                st.write(f"- {r}")
+                st.write(f"• {r}")
+
+        st.markdown("💡 **Action:**")
+        if pred == 2:
+            st.write("👉 Add resources or extend deadline")
+        elif pred == 1:
+            st.write("👉 Monitor closely")
+        else:
+            st.write("👉 Continue as planned")
 
 # ---------------- ANALYTICS ----------------
 with col2:
@@ -182,28 +196,69 @@ if st.button("Fetch Trello Data"):
     cards = get_cards(board_id)
 
     if not cards:
-        st.error("API error or invalid board")
+        st.error("❌ API error or invalid board")
     else:
         tasks = process_cards(cards)
 
         st.success(f"{len(tasks)} tasks loaded")
 
+        risk_labels = {
+            0: "🟢 LOW RISK",
+            1: "🟡 MEDIUM RISK",
+            2: "🚨 HIGH RISK"
+        }
+
         for i, t in enumerate(tasks):
 
-            p, d, t_size, b, c = t
+            with st.container():
 
-            sample = build_features(p, d, t_size, b, c)
+                p, d, t_size, b, c = t
 
-            pred = model.predict(sample)[0]
-            prob = model.predict_proba(sample)[0]
+                sample = build_features(p, d, t_size, b, c)
 
-            label = ["Low", "Medium", "High"][pred]
-            confidence = round(max(prob) * 100, 2)
+                pred = model.predict(sample)[0]
+                prob = model.predict_proba(sample)[0]
+                confidence = round(max(prob) * 100, 2)
 
-            st.write(f"Task {i+1} → {label} ({confidence}%)")
+                st.markdown(f"## 🧩 Task {i+1}")
+                st.markdown(f"### {risk_labels[pred]}")
+                st.metric(f"Confidence (Task {i+1})", f"{confidence}%")
 
-            if confidence < 60:
-                st.warning("⚠️ Low confidence")
+                if confidence < 60:
+                    st.warning("⚠️ Low confidence → data may be incomplete")
 
-            if p == 50 and d == 10:
-                st.warning("⚠️ Missing data detected")
+                reasons = []
+                if p < 40:
+                    reasons.append("Low progress")
+                if d < 5:
+                    reasons.append("Deadline is near")
+                if t_size <= 3:
+                    reasons.append("Small team")
+                if d < 0:
+                    reasons.append("Task is overdue")
+
+                if reasons:
+                    st.markdown("🔍 **Why this risk?**")
+                    for r in reasons:
+                        st.write(f"• {r}")
+
+                if pred == 2:
+                    st.error("⚠️ High chance of delay")
+                elif pred == 1:
+                    st.warning("⚠️ Needs attention")
+                else:
+                    st.success("✅ Task on track")
+
+                st.markdown("💡 **Suggested Action:**")
+
+                if pred == 2:
+                    st.write("👉 Add more team members or extend deadline")
+                elif pred == 1:
+                    st.write("👉 Monitor closely")
+                else:
+                    st.write("👉 Continue as planned")
+
+                if p == 50 and d == 10:
+                    st.error("⚠️ Insufficient data → unreliable prediction")
+
+                st.markdown("---")

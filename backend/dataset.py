@@ -5,52 +5,77 @@ data = []
 
 for _ in range(3000):
 
-    # --- simulate real-world missing data ---
-    progress = random.choice([random.randint(0, 100), None])
-    days_left = random.choice([random.randint(-5, 30), None])  # include overdue
-    team_size = random.choice([random.randint(1, 10), None])
-    budget_used = random.randint(20, 100)
-    task_complexity = random.choice([0, 1, 2])
+    scenario = random.choice([
+        "agile_dev",
+        "bug_fix",
+        "research",
+        "deployment"
+    ])
 
-    # --- fallback handling ---
-    progress = progress if progress is not None else 50
-    days_left = days_left if days_left is not None else 10
-    team_size = team_size if team_size is not None else 3
+    # ---------------- SCENARIO LOGIC ----------------
+
+    if scenario == "agile_dev":
+        progress = random.randint(30, 80)
+        days_left = random.randint(5, 20)
+        team_size = random.randint(3, 7)
+        budget = random.randint(40, 80)
+        complexity = random.choice([1, 2])
+
+    elif scenario == "bug_fix":
+        progress = random.randint(0, 40)
+        days_left = random.randint(0, 5)
+        team_size = random.randint(1, 3)
+        budget = random.randint(70, 100)
+        complexity = 2
+
+    elif scenario == "research":
+        progress = random.randint(20, 60)
+        days_left = random.randint(10, 30)
+        team_size = random.randint(2, 5)
+        budget = random.randint(30, 70)
+        complexity = random.choice([0, 1])
+
+    elif scenario == "deployment":
+        progress = random.randint(40, 70)
+        days_left = random.randint(1, 10)
+        team_size = random.randint(2, 4)
+        budget = random.randint(60, 90)
+        complexity = 2
+
+    # ---------------- EDGE CASES ----------------
+
+    if random.random() < 0.1:
+        days_left = -random.randint(1, 3)  # overdue
+
+    if random.random() < 0.1:
+        progress = 0
+
+    if random.random() < 0.1:
+        team_size = 1
+
+    # ---------------- RISK LOGIC ----------------
 
     risk_score = 0
 
-    # --- base logic ---
     if progress < 30:
         risk_score += 2
-    elif progress < 60:
-        risk_score += 1
 
     if days_left < 5:
         risk_score += 2
-    elif days_left < 10:
-        risk_score += 1
 
-    if budget_used > 85:
-        risk_score += 2
-    elif budget_used > 70:
-        risk_score += 1
-
-    if team_size <= 3:
+    if budget > 85:
         risk_score += 2
 
-    risk_score += task_complexity
+    if team_size <= 2:
+        risk_score += 2
 
-    # --- real-world patterns ---
-    if progress < 30 and days_left < 5:
+    risk_score += complexity
+
+    if days_left < 0:
         risk_score += 3
 
-    if days_left < 0:  # overdue
-        risk_score += 3
+    # ---------------- FINAL CLASS ----------------
 
-    if team_size <= 2 and task_complexity == 2:
-        risk_score += 2
-
-    # --- category ---
     if risk_score >= 8:
         risk = 2
     elif risk_score >= 4:
@@ -58,13 +83,9 @@ for _ in range(3000):
     else:
         risk = 0
 
-    # --- controlled noise ---
-    if random.random() < 0.1:
-        risk = max(0, min(2, risk + random.choice([0, 1])))
-
     data.append([
         progress, days_left, team_size,
-        budget_used, task_complexity, risk
+        budget, complexity, risk
     ])
 
 df = pd.DataFrame(data, columns=[
@@ -74,5 +95,5 @@ df = pd.DataFrame(data, columns=[
 
 df.to_csv("project_risk_dataset.csv", index=False)
 
-print("Dataset ready")
+print("Realistic dataset created")
 print(df["risk"].value_counts())
