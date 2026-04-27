@@ -71,27 +71,27 @@ model.fit(X_train, y_train)
 
 y_pred = model.predict(X_test)
 
-print("\n🚀 Accuracy:", round(accuracy_score(y_test, y_pred), 4))
-print("\n📊 Classification Report:\n", classification_report(y_test, y_pred))
-print("\n🧩 Confusion Matrix:\n", confusion_matrix(y_test, y_pred))
+print("\n Accuracy:", round(accuracy_score(y_test, y_pred), 4))
+print("\n Classification Report:\n", classification_report(y_test, y_pred))
+print("\n Confusion Matrix:\n", confusion_matrix(y_test, y_pred))
 
 # ---------------- CROSS VALIDATION ----------------
 
 cv_scores = cross_val_score(model, X, y, cv=5)
 
-print("\n📈 CV Scores:", cv_scores)
-print("🔥 Avg CV:", round(np.mean(cv_scores), 4))
+print("\n CV Scores:", cv_scores)
+print(" Avg CV:", round(np.mean(cv_scores), 4))
 
 # ---------------- FEATURE IMPORTANCE ----------------
 
 importance = model.feature_importances_
 features = X.columns
 
-print("\n🔍 Feature Importance:")
+print("\n Feature Importance:")
 for f, i in zip(features, importance):
     print(f"{f}: {round(i, 3)}")
 
 # ---------------- SAVE ----------------
 
 joblib.dump(model, "risk_model.pkl")
-print("\n✅ Model saved successfully")
+print("\n Model saved successfully")
