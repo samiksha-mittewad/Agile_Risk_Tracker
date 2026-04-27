@@ -6,7 +6,7 @@ import database
 import auth
 from trello_integration import get_cards, process_cards
 
-# ---------------- INIT ----------------
+
 database.create_table()
 auth.create_users_table()
 
@@ -18,11 +18,11 @@ if "fetch_clicked" not in st.session_state:
 
 st.set_page_config(page_title="Agile Risk Tracker", layout="wide")
 
-# ---------------- AUTH ----------------
+
 if not st.session_state["logged_in"]:
 
     menu = ["Login", "Register"]
-    choice = st.sidebar.radio("🔐 Account", menu)
+    choice = st.sidebar.radio(" Account", menu)
 
     if choice == "Register":
         st.title("Create Account")
@@ -54,16 +54,16 @@ if not st.session_state["logged_in"]:
 
     st.stop()
 
-# ---------------- LOGOUT ----------------
-st.sidebar.success(f"👤 {st.session_state['user']}")
+#  LOGOUT 
+st.sidebar.success(f" {st.session_state['user']}")
 if st.sidebar.button("Logout"):
     st.session_state["logged_in"] = False
     st.rerun()
 
-# ---------------- MODEL ----------------
+#  MODEL 
 model = joblib.load("risk_model.pkl")
 
-# ---------------- FEATURE BUILDER ----------------
+#  FEATURE BUILDER 
 def build_features(p, d, t, b, c):
 
     p = p if p is not None else 50
@@ -89,12 +89,12 @@ def build_features(p, d, t, b, c):
         "small_team": int(t <= 3)
     }])
 
-# ---------------- UI ----------------
-st.title("🚀 Agile Risk Tracker")
+#  UI
+st.title(" Agile Risk Tracker")
 st.caption("AI-powered Sprint Risk Intelligence")
 
-# ---------------- SIDEBAR INPUT ----------------
-st.sidebar.header("📥 Project Inputs")
+#  SIDEBAR INPUT 
+st.sidebar.header(" Project Inputs")
 
 progress = st.sidebar.slider("Progress (%)", 0, 100, 50)
 days_left = st.sidebar.slider("Days Left", -5, 30, 10)
@@ -105,12 +105,12 @@ complexity = st.sidebar.selectbox("Complexity", ["Low", "Medium", "High"])
 complexity_map = {"Low": 0, "Medium": 1, "High": 2}
 c_val = complexity_map[complexity]
 
-# ---------------- LAYOUT ----------------
+# - LAYOUT 
 col1, col2 = st.columns([1, 2])
 
-# ---------------- ANALYSIS ----------------
+# ANALYSIS 
 with col1:
-    st.subheader("⚙️ Risk Analysis")
+    st.subheader(" Risk Analysis")
 
     if st.button("Analyze Risk"):
 
@@ -123,20 +123,20 @@ with col1:
         database.add_data((progress, days_left, team_size, budget, c_val, pred))
 
         risk_labels = {
-            0: "🟢 LOW RISK",
-            1: "🟡 MEDIUM RISK",
-            2: "🚨 HIGH RISK"
+            0: " LOW RISK",
+            1: " MEDIUM RISK",
+            2: " HIGH RISK"
         }
 
         st.markdown(f"### {risk_labels[pred]}")
         st.metric("Confidence", f"{confidence}%")
 
         if pred == 2:
-            st.error("⚠️ High chance of delay")
+            st.error(" High chance of delay")
         elif pred == 1:
-            st.warning("⚠️ Needs attention")
+            st.warning(" Needs attention")
         else:
-            st.success("✅ On track")
+            st.success(" On track")
 
         reasons = []
         if progress < 40:
@@ -147,21 +147,21 @@ with col1:
             reasons.append("Small team")
 
         if reasons:
-            st.markdown("🔍 **Why?**")
+            st.markdown(" **Why?**")
             for r in reasons:
                 st.write(f"• {r}")
 
-        st.markdown("💡 **Action:**")
+        st.markdown(" **Action:**")
         if pred == 2:
-            st.write("👉 Add resources or extend deadline")
+            st.write(" Add resources or extend deadline")
         elif pred == 1:
-            st.write("👉 Monitor closely")
+            st.write(" Monitor closely")
         else:
-            st.write("👉 Continue as planned")
+            st.write(" Continue as planned")
 
 # ---------------- ANALYTICS ----------------
 with col2:
-    st.subheader("📈 Analytics")
+    st.subheader(" Analytics")
 
     data = database.view_data()
 
@@ -183,9 +183,9 @@ with col2:
         st.altair_chart(chart, use_container_width=True)
         st.dataframe(df)
 
-# ---------------- TRELLO ----------------
+# TRELLO
 st.divider()
-st.subheader("🔗 Trello Integration")
+st.subheader("Trello Integration")
 
 board_input = st.text_input("Enter Board ID or URL")
 
@@ -197,22 +197,22 @@ else:
 if st.button("Fetch Trello Data"):
     st.session_state.fetch_clicked = True
 
-# ✅ RUN ONLY ONCE (NO DUPLICATION)
+#  RUN ONLY ONCE (NO DUPLICATION)
 if st.session_state.fetch_clicked:
 
     cards = get_cards(board_id)
 
     if not cards:
-        st.error("❌ API error or invalid board")
+        st.error(" API error or invalid board")
     else:
         tasks = process_cards(cards)
 
         st.success(f"{len(tasks)} tasks loaded")
 
         risk_labels = {
-            0: "🟢 LOW RISK",
-            1: "🟡 MEDIUM RISK",
-            2: "🚨 HIGH RISK"
+            0: "LOW RISK",
+            1: "MEDIUM RISK",
+            2: " HIGH RISK"
         }
 
         for i, t in enumerate(tasks):
@@ -227,12 +227,12 @@ if st.session_state.fetch_clicked:
                 prob = model.predict_proba(sample)[0]
                 confidence = round(max(prob) * 100, 2)
 
-                st.markdown(f"## 🧩 Task {i+1}")
+                st.markdown(f"##  Task {i+1}")
                 st.markdown(f"### {risk_labels[pred]}")
                 st.metric(f"Confidence (Task {i+1})", f"{confidence}%")
 
                 if confidence < 60:
-                    st.warning("⚠️ Low confidence → data may be incomplete")
+                    st.warning(" Low confidence → data may be incomplete")
 
                 reasons = []
                 if p < 40:
@@ -245,27 +245,27 @@ if st.session_state.fetch_clicked:
                     reasons.append("Task is overdue")
 
                 if reasons:
-                    st.markdown("🔍 **Why this risk?**")
+                    st.markdown(" **Why this risk?**")
                     for r in reasons:
                         st.write(f"• {r}")
 
                 if pred == 2:
-                    st.error("⚠️ High chance of delay")
+                    st.error("High chance of delay")
                 elif pred == 1:
-                    st.warning("⚠️ Needs attention")
+                    st.warning(" Needs attention")
                 else:
-                    st.success("✅ Task on track")
+                    st.success(" Task on track")
 
-                st.markdown("💡 **Suggested Action:**")
+                st.markdown(" **Suggested Action:**")
 
                 if pred == 2:
-                    st.write("👉 Add more team members or extend deadline")
+                    st.write(" Add more team members or extend deadline")
                 elif pred == 1:
-                    st.write("👉 Monitor closely")
+                    st.write(" Monitor closely")
                 else:
-                    st.write("👉 Continue as planned")
+                    st.write(" Continue as planned")
 
                 if p == 50 and d == 10:
-                    st.error("⚠️ Insufficient data → unreliable prediction")
+                    st.error(" Insufficient data → unreliable prediction")
 
                 st.markdown("---")

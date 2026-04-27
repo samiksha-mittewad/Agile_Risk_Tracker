@@ -10,7 +10,7 @@ model = joblib.load("risk_model.pkl")
 @app.route("/")
 def home():
     return jsonify({
-        "message": "🚀 Agile Risk Tracker API is running",
+        "message": " Agile Risk Tracker API is running",
         "endpoints": {
             "/predict": "POST → risk prediction",
             "/trello": "POST → trello task analysis"
