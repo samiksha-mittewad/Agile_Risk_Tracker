@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Agile Project Risk Tracker</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="hero">
+        <div class="hero-icon" aria-hidden="true">
+          <span></span>
+        </div>
+        <div>
+          <p class="eyebrow">AI Sprint Intelligence</p>
+          <h1>Agile Project Risk Tracker</h1>
+          <p class="tagline">Predict project risks using AI</p>
+        </div>
+        <div class="status-pill" aria-label="Backend status">
+          <span></span>
+          Flask API
+        </div>
+      </header>
+
+      <section class="dashboard-grid" aria-label="Risk tracker dashboard">
+        <form class="panel input-panel" id="risk-form">
+          <div class="section-heading">
+            <div>
+              <p>Project Metrics</p>
+              <span>Manual estimate</span>
+            </div>
+            <div class="panel-icon" aria-hidden="true">01</div>
+          </div>
+
+          <label class="field">
+            <span class="field-header">
+              <span>Progress (%)</span>
+              <strong id="progress-value">50%</strong>
+            </span>
+            <input id="progress" name="progress" type="range" min="0" max="100" value="50" />
+          </label>
+
+          <label class="field">
+            <span class="field-header">
+              <span>Days Left</span>
+              <strong id="days_left-value">10</strong>
+            </span>
+            <input id="days_left" name="days_left" type="range" min="-10" max="60" value="10" />
+          </label>
+
+          <label class="field">
+            <span class="field-header">
+              <span>Team Size</span>
+              <strong id="team_size-value">5</strong>
+            </span>
+            <input id="team_size" name="team_size" type="range" min="1" max="20" value="5" />
+          </label>
+
+          <label class="field">
+            <span class="field-header">
+              <span>Budget Used (%)</span>
+              <strong id="budget-value">50%</strong>
+            </span>
+            <input id="budget" name="budget" type="range" min="0" max="100" value="50" />
+          </label>
+
+          <label class="field">
+            <span class="field-header">
+              <span>Task Complexity</span>
+              <strong id="complexity-value">Medium</strong>
+            </span>
+            <select id="complexity" name="complexity">
+              <option value="0">Low</option>
+              <option value="1" selected>Medium</option>
+              <option value="2">High</option>
+            </select>
+          </label>
+
+          <button class="primary-button" type="submit">Predict Risk</button>
+          <p class="form-message" id="manual-message" role="status"></p>
+        </form>
+
+        <section class="panel output-panel" aria-live="polite">
+          <div class="section-heading">
+            <div>
+              <p>Risk Output</p>
+              <span>Live model response</span>
+            </div>
+            <div class="panel-icon" aria-hidden="true">02</div>
+          </div>
+
+          <div class="risk-card" id="manual-output">
+            <div class="risk-indicator neutral" id="manual-indicator"></div>
+            <div>
+              <span class="muted-label">Risk Level</span>
+              <h2 id="risk-level">Waiting</h2>
+              <p class="risk-explanation" id="risk-explanation">
+                Run a prediction to see a short reason for the risk level.
+              </p>
+            </div>
+            <div>
+              <span class="muted-label">Confidence</span>
+              <strong class="confidence" id="confidence">--%</strong>
+            </div>
+          </div>
+
+          <div class="metric-strip">
+            <div>
+              <span>Progress</span>
+              <strong id="summary-progress">50%</strong>
+            </div>
+            <div>
+              <span>Budget</span>
+              <strong id="summary-budget">50%</strong>
+            </div>
+            <div>
+              <span>Complexity</span>
+              <strong id="summary-complexity">Medium</strong>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <section class="panel trello-panel">
+        <div class="section-heading">
+          <div>
+            <p>Trello Risk Tracking</p>
+            <span>Board-based prediction</span>
+          </div>
+          <div class="panel-icon" aria-hidden="true">03</div>
+        </div>
+
+        <form class="trello-form" id="trello-form">
+          <label for="board_id">Trello Board ID or URL</label>
+          <div class="trello-row">
+            <input id="board_id" name="board_id" type="text" placeholder="e.g. abc123 or https://trello.com/b/abc123/project" />
+            <button class="secondary-button" type="submit">Submit ID</button>
+          </div>
+          <p class="form-message" id="trello-message" role="status"></p>
+        </form>
+
+        <div class="trello-results" id="trello-results" aria-live="polite"></div>
+      </section>
+
+      <section class="panel analytics-panel">
+        <div class="section-heading">
+          <div>
+            <p>Historical Analysis</p>
+            <span>Prediction trends and confidence</span>
+          </div>
+          <button class="ghost-button" id="refresh-history" type="button">Refresh</button>
+        </div>
+
+        <div class="analytics-stats">
+          <div>
+            <span>Total Predictions</span>
+            <strong id="history-total">0</strong>
+          </div>
+          <div>
+            <span>Average Confidence</span>
+            <strong id="history-confidence">0%</strong>
+          </div>
+          <div>
+            <span>Latest Risk</span>
+            <strong id="history-latest">None</strong>
+          </div>
+        </div>
+
+        <div class="chart-grid">
+          <div class="chart-box">
+            <div class="chart-title">
+              <span>Risk Distribution</span>
+              <small>Low / Medium / High</small>
+            </div>
+            <canvas id="risk-distribution-chart" height="220"></canvas>
+          </div>
+          <div class="chart-box">
+            <div class="chart-title">
+              <span>Prediction Trend</span>
+              <small>Recent predictions</small>
+            </div>
+            <canvas id="risk-trend-chart" height="220"></canvas>
+          </div>
+        </div>
+
+        <div class="history-list" id="history-list" aria-live="polite"></div>
+      </section>
+    </main>
+
+    <script src="/script.js"></script>
+  </body>
+</html>
