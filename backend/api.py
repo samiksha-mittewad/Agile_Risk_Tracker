@@ -4,6 +4,8 @@ import pandas as pd
 from trello_integration import get_cards, process_cards
 
 app = Flask(__name__)
+from flask_cors import CORS
+CORS(app)
 model = joblib.load("risk_model.pkl")
 
 # ---------------- HOME ROUTE ----------------
