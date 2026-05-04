@@ -1,6 +1,6 @@
 import sqlite3
 
-# ---------------- CREATE TABLE ----------------
+#  CREATE TABLE 
 def create_table():
     conn = sqlite3.connect("risk.db")
     c = conn.cursor()
@@ -21,7 +21,7 @@ def create_table():
     conn.close()
 
 
-# ---------------- INSERT DATA ----------------
+# INSERT DATA 
 def add_data(data):
     conn = sqlite3.connect("risk.db")
     c = conn.cursor()
@@ -36,7 +36,7 @@ def add_data(data):
     conn.close()
 
 
-# ---------------- FETCH DATA ----------------
+#  FETCH DATA 
 def view_data():
     conn = sqlite3.connect("risk.db")
     c = conn.cursor()
@@ -48,7 +48,7 @@ def view_data():
     return data
 
 
-# ---------------- CLEAR DATA (OPTIONAL TOOL) ----------------
+#  CLEAR DATA (OPTIONAL TOOL) 
 def delete_all_data():
     conn = sqlite3.connect("risk.db")
     c = conn.cursor()

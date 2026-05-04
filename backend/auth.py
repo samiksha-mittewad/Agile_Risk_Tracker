@@ -1,6 +1,6 @@
 import sqlite3
 
-# ---------------- CREATE TABLE ----------------
+#  CREATE TABLE
 def create_users_table():
     conn = sqlite3.connect("users.db")
     c = conn.cursor()
@@ -16,7 +16,7 @@ def create_users_table():
     conn.close()
 
 
-# ---------------- ADD USER ----------------
+#  ADD USER
 def add_user(username, password):
     conn = sqlite3.connect("users.db")
     c = conn.cursor()
@@ -35,7 +35,7 @@ def add_user(username, password):
     return True
 
 
-# ---------------- LOGIN ----------------
+#  LOGIN 
 def login_user(username, password):
     conn = sqlite3.connect("users.db")
     c = conn.cursor()

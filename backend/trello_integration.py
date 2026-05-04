@@ -38,7 +38,7 @@ def process_cards(cards):
 
     for card in cards:
 
-        # --- days_left ---
+        #  days_left 
         try:
             if card.get("due"):
                 due = datetime.strptime(card["due"][:10], "%Y-%m-%d")
@@ -48,7 +48,7 @@ def process_cards(cards):
         except:
             days_left = 10
 
-        # --- fallback ---
+        #  fallback 
         days_left = days_left if days_left is not None else 10
         progress = get_progress(card)
         team_size = len(card.get("idMembers", [])) or 1

@@ -12,7 +12,7 @@ for _ in range(3000):
         "deployment"
     ])
 
-    # ---------------- SCENARIO LOGIC ----------------
+    # SCENARIO LOGIC
 
     if scenario == "agile_dev":
         progress = random.randint(30, 80)
@@ -42,7 +42,7 @@ for _ in range(3000):
         budget = random.randint(60, 90)
         complexity = 2
 
-    # ---------------- EDGE CASES ----------------
+    #  EDGE CASES 
 
     if random.random() < 0.1:
         days_left = -random.randint(1, 3)  # overdue
@@ -53,7 +53,7 @@ for _ in range(3000):
     if random.random() < 0.1:
         team_size = 1
 
-    # ---------------- RISK LOGIC ----------------
+    # RISK LOGIC 
 
     risk_score = 0
 
@@ -74,7 +74,7 @@ for _ in range(3000):
     if days_left < 0:
         risk_score += 3
 
-    # ---------------- FINAL CLASS ----------------
+    #  FINAL CLASS 
 
     if risk_score >= 8:
         risk = 2
